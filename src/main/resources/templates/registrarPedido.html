@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Detalle del Pedido</title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+
+        <div th:if="${pedido != null}">
+            <h3>Detalle del Pedido</h3>
+
+            <p><strong>Cliente:</strong>
+                <span th:text="${pedido.cliente.nombres + ' ' + pedido.cliente.apellidos}"></span>
+            </p>
+
+            <p><strong>Fecha:</strong>
+                <span th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}"></span>
+            </p>
+
+            <p><strong>Estado:</strong>
+                <span th:text="${pedido.estado}"></span>
+            </p>
+
+            <h4>Productos:</h4>
+            <ul>
+                <li th:each="detalle : ${pedido.detalles}">
+                    <span th:text="${detalle.producto.nombre}"></span> -
+                    <span th:text="${detalle.cantidad}"></span> unidades -
+                    <span th:text="${detalle.precioUnitario}"></span> soles c/u
+                </li>
+            </ul>
+        </div>
+
+    </body>
+</html>
+
+
+
+<!--
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Registrar Pedido</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>    
+    <body>
+        <h2>Formulario del Pedido</h2>        
+
+        <form th:action="@{/usuario/{id}(id=${vendedorId})}" th:object="${pedido}" method="post">
+
+            <h3>Cliente</h3>
+            <input type="text" th:field="*{cliente.nombres}" placeholder="Nombres del cliente" required />
+            <input type="text" th:field="*{cliente.apellidos}" placeholder="Apellidos del cliente" required />
+            <input type="text" th:field="*{cliente.dni}" placeholder="DNI del cliente" required />
+            <input type="text" th:field="*{cliente.direccion}" placeholder="Dirección del cliente" required />
+            <input type="text" th:field="*{cliente.telefono}" placeholder="Teléfono" required />
+            <input type="email" th:field="*{cliente.correo}" placeholder="Correo electrónico" required />
+
+            <h3>Fecha del pedido</h3>
+            <input type="datetime-local" th:field="*{fecha}" required />
+
+            <h3>Productos</h3>
+            <div th:each="detalle, stat : *{detalles}">
+                <label>Producto:</label>
+                <select th:field="*{detalles[__${stat.index}__].producto.id}">
+                    <option th:each="prod : ${productos}" th:value="${prod.id}" th:text="${prod.nombre}">Producto</option>
+                </select>
+
+                <label>Cantidad:</label>
+                <input type="number" th:field="*{detalles[__${stat.index}__].cantidad}" placeholder="Cantidad" min="1" required />
+
+                <label>Precio Unitario:</label>
+                <input type="number" th:field="*{detalles[__${stat.index}__].precioUnitario}" placeholder="Precio Unitario" step="0.01" required />
+                <hr/>
+            </div>
+
+            <div th:if="${mensajeProductos}" style="color:red;">
+                <p th:text="${mensajeProductos}"></p>
+            </div>
+
+            <input type="hidden" th:field="*{estado}" value="pendiente" />
+
+            <button type="submit">Registrar Pedido</button>
+        </form>
+
+    </body>
+</html>
+-->

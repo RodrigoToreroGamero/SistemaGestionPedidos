@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Exportar Pedidos</title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+
+        <h2>Pedidos registrados</h2>
+
+        <div th:if="${pedidos != null}">
+            <div th:each="pedido : ${pedidos}">
+                <p><strong>Cliente:</strong>
+                    <span th:text="${pedido.cliente.nombres + ' ' + pedido.cliente.apellidos}"></span>
+                </p>
+                <p><strong>Fecha:</strong>
+                    <span th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}"></span>
+                </p>
+                <p><strong>Estado:</strong>
+                    <span th:text="${pedido.estado}"></span>
+                </p>
+
+                <h4>Detalles:</h4>
+                <ul>
+                    <li th:each="detalle : ${pedido.detalles}">
+                        <span th:text="${detalle.producto.nombre}"></span> -
+                        <span th:text="${detalle.cantidad}"></span> unidades -
+                        <span th:text="${detalle.precioUnitario}"></span> soles c/u
+                    </li>
+                </ul>
+                <hr/>
+            </div>
+        </div>
+
+        <h3>Filtrar y exportar</h3>
+        <form th:action="@{/reporte/pedidos/exportar}" method="get">
+            <input type="text" name="estado" placeholder="Estado del pedido"/>
+            <input type="number" name="idCliente" placeholder="ID del cliente"/>
+            <input type="number" name="idVendedor" placeholder="ID del vendedor"/>
+            <input type="datetime-local" name="inicio" placeholder="Inicio"/>
+            <input type="datetime-local" name="fin" placeholder="Fin"/>
+            <button type="submit">Exportar CSV</button>
+        </form>
+
+        <div th:if="${pedido != null}">
+            <h3>Detalle del Pedido</h3>
+
+            <p><strong>Cliente:</strong>
+                <span th:text="${pedido.cliente.nombres + ' ' + pedido.cliente.apellidos}"></span>
+            </p>
+
+            <p><strong>Fecha:</strong>
+                <span th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}"></span>
+            </p>
+
+            <p><strong>Estado:</strong>
+                <span th:text="${pedido.estado}"></span>
+            </p>
+
+            <h4>Productos:</h4>
+            <ul>
+                <li th:each="detalle : ${pedido.detalles}">
+                    <span th:text="${detalle.producto.nombre}"></span> -
+                    <span th:text="${detalle.cantidad}"></span> unidades -
+                    <span th:text="${detalle.precioUnitario}"></span> soles c/u
+                </li>
+            </ul>
+        </div>
+
+        <div th:if="${mensaje}" style="color:red;">
+            <p th:text="${mensaje}"></p>
+        </div>
+
+    </body>
+</html>
+
+
+
+
+<!--
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head><title>Exportar Pedidos</title></head>
+    <body>
+        <h2>Pedidos registrados</h2>
+        <div th:each="pedido : ${pedidos}">
+            <p><strong>Cliente:</strong> <span th:text="${pedido.cliente.nombres} + ' ' + ${pedido.cliente.apellidos}"></span></p>
+            <p><strong>Fecha:</strong> <span th:text="${pedido.fecha}"></span></p>
+            <p><strong>Estado:</strong> <span th:text="${pedido.estado}"></span></p>
+
+            <h4>Detalles:</h4>
+            <ul>
+                <li th:each="detalle : ${pedido.detalles}">
+                    <span th:text="${detalle.producto.nombre}"></span> -
+                    <span th:text="${detalle.cantidad}"></span> unidades -
+                    <span th:text="${detalle.precioUnitario}"></span> soles c/u
+                </li>
+            </ul>
+            <hr/>
+        </div>
+
+        <form th:action="@{/reporte/pedidos/exportar}" method="get">
+            <input type="text" name="estado" placeholder="Estado del pedido"/>
+            <input type="number" name="idCliente" placeholder="ID del cliente"/>
+            <input type="number" name="idVendedor" placeholder="ID del vendedor"/>
+            <input type="datetime-local" name="inicio" placeholder="Inicio"/>
+            <input type="datetime-local" name="fin" placeholder="Fin"/>
+            <button type="submit">Exportar CSV</button>
+        </form>
+
+        <div th:if="${pedido != null}">
+            <h3>Detalle del Pedido</h3>
+            <p><strong>Cliente:</strong> <span th:text="${pedido.cliente.nombres} + ' ' + ${pedido.cliente.apellidos}"></span></p>
+            <p><strong>Fecha:</strong> <span th:text="${pedido.fecha}"></span></p>
+            <p><strong>Estado:</strong> <span th:text="${pedido.estado}"></span></p>
+            <ul>
+                <li th:each="detalle : ${pedido.detalles}">
+                    <span th:text="${detalle.producto.nombre}"></span> -
+                    <span th:text="${detalle.cantidad}"></span> unidades -
+                    <span th:text="${detalle.precioUnitario}"></span> soles c/u
+                </li>
+            </ul>
+        </div>
+
+
+        <div th:if="${mensaje}" style="color:red;">
+            <p th:text="${mensaje}"></p>
+        </div>
+
+
+    </body>
+</html>
+-->

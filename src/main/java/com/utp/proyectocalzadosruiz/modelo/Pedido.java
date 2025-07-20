@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.List;
  */
 
 @Entity
+@Table(name = "pedido")
 public class Pedido {
     
     @Id
@@ -55,9 +57,7 @@ public class Pedido {
         this.fecha = fecha;
         this.estado = estado;
         this.vendedor = vendedor;
-    }
-
-      
+    }      
 
     public Long getId() {
         return id;
@@ -106,10 +106,11 @@ public class Pedido {
 
     public void setVendedor(Usuario vendedor) {
         this.vendedor = vendedor;
-    }
+    }   
 
-    
-
-    
+    @Override
+    public String toString() {
+        return "Pedido{" + "id=" + id + ", cliente=" + cliente + ", fecha=" + fecha + ", estado=" + estado + ", detalles=" + detalles + ", vendedor=" + vendedor + '}';
+    }    
     
 }

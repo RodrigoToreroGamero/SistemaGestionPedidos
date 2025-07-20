@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Bienvenido al Sistema de Calzados Ruiz</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <h1>Bienvenido al sistema</h1>
+        <a th:href="@{/usuario/{id}/formulario(id=${vendedorId})}">📝 Registrar Pedido</a>
+        <br/>
+        <a href="/pedidos">Ver lista de pedidos</a>
+    </body>
+</html>
