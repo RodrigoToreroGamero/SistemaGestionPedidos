@@ -15,13 +15,13 @@ import org.springframework.stereotype.Repository;
  * @author rodri
  */
 @Repository
-public interface PedidoDAO extends JpaRepository<Pedido, Long> {
+public interface PedidoDAO extends JpaRepository<Pedido, Integer> {
 
     List<Pedido> findByEstado(String estado);
 
-    List<Pedido> findByClienteId(Long idCliente);
+    List<Pedido> findByCliente_Id(Integer ID_Cliente);
 
-    List<Pedido> findByVendedorId(Long idVendedor);
+    List<Pedido> findByUsuario_Id(Integer ID_Vendedor);
 
     List<Pedido> findByFecha(LocalDateTime fecha);
 

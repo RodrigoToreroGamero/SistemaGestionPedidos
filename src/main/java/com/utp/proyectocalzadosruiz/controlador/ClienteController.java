@@ -37,7 +37,7 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<Cliente> obtenerPorId(@PathVariable Integer id) {
         Optional<Cliente> resultado = clienteDAO.findById(id);
         if (resultado.isPresent()) {
             return ResponseEntity.ok(resultado.get());
@@ -53,7 +53,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> actualizar(@PathVariable Long id, @RequestBody Cliente actualizado) {
+    public ResponseEntity<String> actualizar(@PathVariable Integer id, @RequestBody Cliente actualizado) {
         Optional<Cliente> existente = this.clienteDAO.findById(id);
         if (existente.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado");
@@ -66,14 +66,14 @@ public class ClienteController {
         entidad.setDni(actualizado.getDni());
         entidad.setDireccion(actualizado.getDireccion());
         entidad.setTelefono(actualizado.getTelefono());
-        entidad.setCorreo(actualizado.getCorreo());
+        entidad.setEmail(actualizado.getEmail());
 
         this.clienteDAO.save(entidad);
         return ResponseEntity.ok("Actualizado correctamente");
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         if (!this.clienteDAO.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado");
         }
@@ -94,7 +94,7 @@ public class ClienteController {
 
     @GetMapping("/correo/{correo}")
     public ResponseEntity<Cliente> buscarPorCorreo(@PathVariable String correo) {
-        Optional<Cliente> resultado = clienteDAO.findByCorreo(correo);
+        Optional<Cliente> resultado = clienteDAO.findByEmail(correo);
 
         if (resultado.isPresent()) {
             return ResponseEntity.ok(resultado.get());

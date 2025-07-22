@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Exportar Pedidos</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/styles.css" type="text/css"/>        
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+
+        <h2>Pedidos registrados</h2>
+
+        <div th:if="${pedidos != null}">
+            <div th:each="pedido : ${pedidos}">
+                <p><strong>Cliente:</strong>
+                    <span th:text="${pedido.cliente.nombres + ' ' + pedido.cliente.apellidos}"></span>
+                </p>
+                <p><strong>Fecha:</strong>
+                    <span th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}"></span>
+                </p>
+                <p><strong>Estado:</strong>
+                    <span th:text="${pedido.estado}"></span>
+                </p>
+
+                <h4>Detalles:</h4>
+                <ul>
+                    <li th:each="detalle : ${pedido.detalles}">
+                        <span th:text="${detalle.producto.nombre}"></span> -
+                        <span th:text="${detalle.cantidad}"></span> unidades -
+                        <span th:text="${detalle.precioUnitario}"></span> soles c/u
+                    </li>
+                </ul>
+                <hr/>
+            </div>
+        </div>
+
+        <h3>Filtrar y exportar</h3>
+        <form th:action="@{/reporte/pedidos/exportar}" method="get">
+            <input type="text" name="estado" placeholder="Estado del pedido"/>
+            <input type="number" name="idCliente" placeholder="ID del cliente"/>
+            <input type="number" name="idVendedor" placeholder="ID del vendedor"/>
+            <input type="datetime-local" name="inicio" placeholder="Inicio"/>
+            <input type="datetime-local" name="fin" placeholder="Fin"/>
+            <button type="submit">Exportar CSV</button>
+        </form>
+
+        <div th:if="${pedido != null}">
+            <h3>Detalle del Pedido</h3>
+
+            <p><strong>Cliente:</strong>
+                <span th:text="${pedido.cliente.nombres + ' ' + pedido.cliente.apellidos}"></span>
+            </p>
+
+            <p><strong>Fecha:</strong>
+                <span th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}"></span>
+            </p>
+
+            <p><strong>Estado:</strong>
+                <span th:text="${pedido.estado}"></span>
+            </p>
+
+            <h4>Productos:</h4>
+            <ul>
+                <li th:each="detalle : ${pedido.detalles}">
+                    <span th:text="${detalle.producto.nombre}"></span> -
+                    <span th:text="${detalle.cantidad}"></span> unidades -
+                    <span th:text="${detalle.precioUnitario}"></span> soles c/u
+                </li>
+            </ul>
+        </div>
+
+        <div th:if="${mensaje}" style="color:red;">
+            <p th:text="${mensaje}"></p>
+        </div>
+
+    </body>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
+</html>

@@ -40,7 +40,7 @@ public class MovimientoInventarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MovimientoInventario> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<MovimientoInventario> obtenerPorId(@PathVariable Integer id) {
         Optional<MovimientoInventario> resultado = movimientoInventarioDAO.findById(id);
         if (resultado.isPresent()) {
             return ResponseEntity.ok(resultado.get());
@@ -56,7 +56,7 @@ public class MovimientoInventarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> actualizar(@PathVariable Long id, @RequestBody MovimientoInventario actualizado) {
+    public ResponseEntity<String> actualizar(@PathVariable Integer id, @RequestBody MovimientoInventario actualizado) {
         Optional<MovimientoInventario> existente = movimientoInventarioDAO.findById(id);
         if (existente.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado");
@@ -76,7 +76,7 @@ public class MovimientoInventarioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         if (!movimientoInventarioDAO.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado");
         }
@@ -85,8 +85,8 @@ public class MovimientoInventarioController {
     }
 
     @GetMapping("/producto/{idProducto}")
-    public ResponseEntity<List<MovimientoInventario>> obtenerPorProducto(@PathVariable Long idProducto) {
-        List<MovimientoInventario> movimientos = movimientoInventarioDAO.findByProductoId(idProducto);
+    public ResponseEntity<List<MovimientoInventario>> obtenerPorProducto(@PathVariable Integer idProducto) {
+        List<MovimientoInventario> movimientos = movimientoInventarioDAO.findByProducto_Id(idProducto);
 
         if (movimientos.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(movimientos);
@@ -96,8 +96,8 @@ public class MovimientoInventarioController {
     }
 
     @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<List<MovimientoInventario>> obtenerPorUsuario(@PathVariable Long idUsuario) {
-        List<MovimientoInventario> movimientos = movimientoInventarioDAO.findByUsuarioId(idUsuario);
+    public ResponseEntity<List<MovimientoInventario>> obtenerPorUsuario(@PathVariable Integer idUsuario) {
+        List<MovimientoInventario> movimientos = movimientoInventarioDAO.findByUsuario_Id(idUsuario);
 
         if (movimientos.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(movimientos);

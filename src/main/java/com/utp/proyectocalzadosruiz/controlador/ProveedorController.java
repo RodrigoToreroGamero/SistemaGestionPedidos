@@ -37,7 +37,7 @@ public class ProveedorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Proveedor> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<Proveedor> obtenerPorId(@PathVariable Integer id) {
         Optional<Proveedor> resultado = proveedorDAO.findById(id);
 
         if (resultado.isPresent()) {
@@ -54,7 +54,7 @@ public class ProveedorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> actualizar(@PathVariable Long id, @RequestBody Proveedor actualizado) {
+    public ResponseEntity<String> actualizar(@PathVariable Integer id, @RequestBody Proveedor actualizado) {
         Optional<Proveedor> existente = proveedorDAO.findById(id);
         if (existente.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado");
@@ -72,7 +72,7 @@ public class ProveedorController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         if (!proveedorDAO.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado");
         }

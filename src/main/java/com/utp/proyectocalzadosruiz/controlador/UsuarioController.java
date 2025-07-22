@@ -37,7 +37,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<Usuario> obtenerPorId(@PathVariable Integer id) {
         Optional<Usuario> resultado = usuarioDAO.findById(id);
         if (resultado.isPresent()) {
             return ResponseEntity.ok(resultado.get());
@@ -53,7 +53,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> actualizar(@PathVariable Long id, @RequestBody Usuario actualizado) {
+    public ResponseEntity<String> actualizar(@PathVariable Integer id, @RequestBody Usuario actualizado) {
         Optional<Usuario> existente = usuarioDAO.findById(id);
         if (existente.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado");
@@ -70,7 +70,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         if (!usuarioDAO.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado");
         }

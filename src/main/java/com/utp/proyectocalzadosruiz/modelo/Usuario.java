@@ -7,10 +7,13 @@ package com.utp.proyectocalzadosruiz.modelo;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,20 +23,23 @@ import java.util.List;
  */
 
 @Entity
+@Table(name = "usuario")
 public class Usuario {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "ID_Usuario")
+    private Integer id;
     
-    @Column(name = "nombre", nullable = false)
+    @Column(name = "NombreUsuario", unique = true)
     private String nombre;
     
-    @Column(name = "contraseña", nullable = false)
+    @Column(name = "Contraseña")
     private String contrasena;
     
-    @Column(name = "rol", nullable = false)
-    private String rol;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Rol")
+    private Enumeraciones.Rol rol;
     
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<MovimientoInventario> movimientos = new ArrayList<>();
@@ -43,18 +49,18 @@ public class Usuario {
 
     
     
-    public Usuario(Long id, String nombre, String contrasena, String rol) {
+    public Usuario(Integer id, String nombre, String contrasena, Enumeraciones.Rol rol) {
         this.id = id;
         this.nombre = nombre;
         this.contrasena = contrasena;
         this.rol = rol;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -74,11 +80,11 @@ public class Usuario {
         this.contrasena = contrasena;
     }
 
-    public String getRol() {
+    public Enumeraciones.Rol getRol() {
         return rol;
     }
 
-    public void setRol(String rol) {
+    public void setRol(Enumeraciones.Rol rol) {
         this.rol = rol;
     }
 

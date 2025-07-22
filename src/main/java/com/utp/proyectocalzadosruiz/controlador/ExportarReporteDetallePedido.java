@@ -8,23 +8,20 @@ import com.utp.proyectocalzadosruiz.modelo.DetallePedido;
 import com.utp.proyectocalzadosruiz.modelo.dao.DetallePedidoDAO;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
  * @author rodri
  */
-@RestController
+@Controller
 @RequestMapping("/reporte/detalles")
 public class ExportarReporteDetallePedido extends ExportarReporteController {
 
@@ -33,13 +30,13 @@ public class ExportarReporteDetallePedido extends ExportarReporteController {
 
     @GetMapping("/filtrar")
     public ResponseEntity<List<DetallePedido>> obtenerDetallesFiltrados(
-            @RequestParam(required = false) Long idProducto,
-            @RequestParam(required = false) Long idPedido
+            @RequestParam(required = false) Integer idProducto,
+            @RequestParam(required = false) Integer idPedido
     ) {
         if (idProducto != null) {
-            return ResponseEntity.ok(detallePedidoDAO.findByProductoId(idProducto));
+            return ResponseEntity.ok(detallePedidoDAO.findByProducto_Id(idProducto));
         } else if (idPedido != null) {
-            return ResponseEntity.ok(detallePedidoDAO.findByPedidoId(idPedido));
+            return ResponseEntity.ok(detallePedidoDAO.findByPedido_Id(idPedido));
         } else {
             return ResponseEntity.ok(detallePedidoDAO.findAll());
         }
@@ -47,15 +44,15 @@ public class ExportarReporteDetallePedido extends ExportarReporteController {
 
     @GetMapping("/exportar")
     public ResponseEntity<byte[]> exportarDetallesCSV(
-            @RequestParam(required = false) Long idProducto,
-            @RequestParam(required = false) Long idPedido
+            @RequestParam(required = false) Integer idProducto,
+            @RequestParam(required = false) Integer idPedido
     ) {
         List<DetallePedido> detalles;
 
         if (idProducto != null) {
-            detalles = detallePedidoDAO.findByProductoId(idProducto);
+            detalles = detallePedidoDAO.findByProducto_Id(idProducto);
         } else if (idPedido != null) {
-            detalles = detallePedidoDAO.findByPedidoId(idPedido);
+            detalles = detallePedidoDAO.findByPedido_Id(idPedido);
         } else {
             detalles = detallePedidoDAO.findAll();
         }
@@ -65,21 +62,21 @@ public class ExportarReporteDetallePedido extends ExportarReporteController {
         writer.println("IDDetalle,IDPedido,Producto,Cantidad,PrecioUnitario,Subtotal");
 
         for (DetallePedido d : detalles) {
-            double subtotal = d.getCantidad() * d.getPrecioUnitario();
+            BigDecimal subtotal = d.getPrecioUnitario().multiply(BigDecimal.valueOf(d.getCantidad()));
 
             writer.printf("%d,%d,%s,%d,%.2f,%.2f%n",
                     d.getId(),
                     d.getPedido().getId(),
                     d.getProducto().getNombre(),
                     d.getCantidad(),
-                    d.getPrecioUnitario(),
-                    subtotal
+                    d.getPrecioUnitario().doubleValue(),
+                    subtotal.doubleValue()
             );
+
         }
 
         writer.flush();
         return generarArchivoCSV(out, "reporte_detalles.csv");
     }
 
-    
 }

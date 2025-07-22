@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
  * @author rodri
  */
 @Repository
-public interface UsuarioDAO extends JpaRepository<Usuario, Long> {
+public interface UsuarioDAO extends JpaRepository<Usuario, Integer> {
 
     Optional<Usuario> findByNombre(String nombre);
 

@@ -14,13 +14,13 @@ import org.springframework.stereotype.Repository;
  * @author rodri
  */
 @Repository
-public interface ProductoDAO extends JpaRepository<Producto, Long> {
+public interface ProductoDAO extends JpaRepository<Producto, Integer> {
 
     List<Producto> findByNombre(String nombre);
 
     List<Producto> findByTalla(String talla);
 
-    List<Producto> findByProveedorId(Long idProveedor);
+    List<Producto> findByProveedor_Id(Integer ID_Proveedor);
     
     List<Producto> findByProveedorNombre(String nombre);
 

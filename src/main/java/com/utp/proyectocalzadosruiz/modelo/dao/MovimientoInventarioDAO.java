@@ -15,11 +15,11 @@ import org.springframework.stereotype.Repository;
  * @author rodri
  */
 @Repository
-public interface MovimientoInventarioDAO extends JpaRepository<MovimientoInventario, Long> {
+public interface MovimientoInventarioDAO extends JpaRepository<MovimientoInventario, Integer> {
 
-    List<MovimientoInventario> findByProductoId(Long idProducto);
+    List<MovimientoInventario> findByProducto_Id(Integer ID_Producto);
 
-    List<MovimientoInventario> findByUsuarioId(Long idUsuario);
+    List<MovimientoInventario> findByUsuario_Id(Integer ID_Usuario);
 
     List<MovimientoInventario> findByTipoMovimiento(String tipo);
 

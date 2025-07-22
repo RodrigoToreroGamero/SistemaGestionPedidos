@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
  * @author rodri
  */
 @Repository
-public interface ProveedorDAO extends JpaRepository<Proveedor, Long> {
+public interface ProveedorDAO extends JpaRepository<Proveedor, Integer> {
 
     Optional<Proveedor> findByNombre(String nombre);
 }

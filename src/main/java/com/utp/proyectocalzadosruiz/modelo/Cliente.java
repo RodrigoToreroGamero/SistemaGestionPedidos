@@ -9,54 +9,57 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  *
  * @author rodri
  */
 @Entity
+@Table(name = "cliente")
 public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "ID_Cliente")
+    private Integer id;
 
-    @Column(name = "nombres", nullable = false)
+    @Column(name = "Nombres")
     private String nombres;
 
-    @Column(name = "apellidos", nullable = false)
+    @Column(name = "Apellidos")
     private String apellidos;
 
-    @Column(name = "dni", nullable = false)
+    @Column(name = "DNI", unique = true, length = 8)
     private String dni;
 
-    @Column(name = "direccion", nullable = false)
+    @Column(name = "Direccion")
     private String direccion;
 
-    @Column(name = "telefono", nullable = false)
+    @Column(name = "Telefono")
     private String telefono;
 
-    @Column(name = "correo", nullable = false)
-    private String correo;
+    @Column(name = "Email")
+    private String email;
 
     public Cliente() {
     }
 
-    public Cliente(Long id, String nombres, String apellidos, String dni, String direccion, String telefono, String correo) {
+    public Cliente(Integer id, String nombres, String apellidos, String dni, String direccion, String telefono, String correo) {
         this.id = id;
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.dni = dni;
         this.direccion = direccion;
         this.telefono = telefono;
-        this.correo = correo;
+        this.email = correo;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -100,17 +103,17 @@ public class Cliente {
         this.telefono = telefono;
     }
 
-    public String getCorreo() {
-        return correo;
+    public String getEmail() {
+        return email;
     }
 
-    public void setCorreo(String correo) {
-        this.correo = correo;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
     public String toString() {
-        return "Cliente{" + "id=" + id + ", nombres=" + nombres + ", apellidos=" + apellidos + ", dni=" + dni + ", direccion=" + direccion + ", telefono=" + telefono + ", correo=" + correo + '}';
+        return "Cliente{" + "id=" + id + ", nombres=" + nombres + ", apellidos=" + apellidos + ", dni=" + dni + ", direccion=" + direccion + ", telefono=" + telefono + ", correo=" + email + '}';
     }
 
 }

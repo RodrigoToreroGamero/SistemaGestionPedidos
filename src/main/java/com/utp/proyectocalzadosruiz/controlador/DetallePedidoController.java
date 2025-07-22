@@ -38,7 +38,7 @@ public class DetallePedidoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DetallePedido> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<DetallePedido> obtenerPorId(@PathVariable Integer id) {
         Optional<DetallePedido> resultado = detallePedidoDAO.findById(id);
         if (resultado.isPresent()) {
             return ResponseEntity.ok(resultado.get());
@@ -54,7 +54,7 @@ public class DetallePedidoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> actualizar(@PathVariable Long id, @RequestBody DetallePedido detalleActualizado) {
+    public ResponseEntity<String> actualizar(@PathVariable Integer id, @RequestBody DetallePedido detalleActualizado) {
         Optional<DetallePedido> detalleExistente = detallePedidoDAO.findById(id);
         if (detalleExistente.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Detalle no encontrado");
@@ -69,7 +69,7 @@ public class DetallePedidoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         if (!detallePedidoDAO.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Detalle no encontrado");
         }
@@ -78,8 +78,8 @@ public class DetallePedidoController {
     }
 
     @GetMapping("/producto/{idProducto}")
-    public ResponseEntity<List<DetallePedido>> buscarPorProducto(@PathVariable Long idProducto) {
-        List<DetallePedido> detalles = detallePedidoDAO.findByProductoId(idProducto);
+    public ResponseEntity<List<DetallePedido>> buscarPorProducto(@PathVariable Integer idProducto) {
+        List<DetallePedido> detalles = detallePedidoDAO.findByProducto_Id(idProducto);
 
         if (detalles.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(detalles);
@@ -89,8 +89,8 @@ public class DetallePedidoController {
     }
 
     @GetMapping("/pedido/{idPedido}")
-    public ResponseEntity<List<DetallePedido>> buscarPorPedido(@PathVariable Long idPedido) {
-        List<DetallePedido> detalles = detallePedidoDAO.findByPedidoId(idPedido);
+    public ResponseEntity<List<DetallePedido>> buscarPorPedido(@PathVariable Integer idPedido) {
+        List<DetallePedido> detalles = detallePedidoDAO.findByPedido_Id(idPedido);
 
         if (detalles.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(detalles);
