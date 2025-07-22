@@ -38,7 +38,7 @@ public class ProductoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<Producto> obtenerPorId(@PathVariable Integer id) {
         Optional<Producto> resultado = productoDAO.findById(id);
         if (resultado.isPresent()) {
             return ResponseEntity.ok(resultado.get());
@@ -54,7 +54,7 @@ public class ProductoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> actualizar(@PathVariable Long id, @RequestBody Producto actualizado) {
+    public ResponseEntity<String> actualizar(@PathVariable Integer id, @RequestBody Producto actualizado) {
         Optional<Producto> existente = productoDAO.findById(id);
         if (existente.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado");
@@ -74,7 +74,7 @@ public class ProductoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         if (!productoDAO.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No encontrado");
         }
@@ -105,8 +105,8 @@ public class ProductoController {
     }
 
     @GetMapping("/proveedor/{idProveedor}")
-    public ResponseEntity<List<Producto>> buscarPorProveedor(@PathVariable Long idProveedor) {
-        List<Producto> productos = productoDAO.findByProveedorId(idProveedor);
+    public ResponseEntity<List<Producto>> buscarPorProveedor(@PathVariable Integer idProveedor) {
+        List<Producto> productos = productoDAO.findByProveedor_Id(idProveedor);
 
         if (productos.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(productos);

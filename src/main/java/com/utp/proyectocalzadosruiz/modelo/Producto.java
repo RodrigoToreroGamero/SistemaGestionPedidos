@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,25 +28,26 @@ public class Producto {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "ID_Producto")
+    private Integer id;
     
-    @Column(name = "nombre", nullable = false)
+    @Column(name = "Nombre")
     private String nombre;
     
-    @Column(name = "descripcion", nullable = false)
+    @Column(name = "Descripcion")
     private String descripcion;
     
-    @Column(name = "talla", nullable = false)
+    @Column(name = "Talla")
     private String talla;
     
-    @Column(name = "stock_actual", nullable = false)
+    @Column(name = "Stock_Actual")
     private Integer stockActual;
     
-    @Column(name = "precio", nullable = false)
-    private Double precio;
+    @Column(name = "Precio")
+    private BigDecimal precio;
     
     @ManyToOne
-    @JoinColumn(name = "id_proveedor", nullable = false)
+    @JoinColumn(name = "ID_Proveedor")
     private Proveedor proveedor;
     
     @OneToMany(mappedBy = "producto")
@@ -59,7 +61,7 @@ public class Producto {
 
     
     
-    public Producto(Long id, String nombre, String descripcion, String talla, Integer stockActual, Double precio, Proveedor proveedor) {
+    public Producto(Integer id, String nombre, String descripcion, String talla, Integer stockActual, BigDecimal precio, Proveedor proveedor) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -70,11 +72,11 @@ public class Producto {
     }
      
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -110,11 +112,11 @@ public class Producto {
         this.stockActual = stockActual;
     }
 
-    public Double getPrecio() {
+    public BigDecimal getPrecio() {
         return precio;
     }
 
-    public void setPrecio(Double precio) {
+    public void setPrecio(BigDecimal precio) {
         this.precio = precio;
     }
 

@@ -26,18 +26,19 @@ public class Proveedor {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "ID_Proveedor")
+    private Integer id;
     
-    @Column(name = "nombre", nullable = false)
+    @Column(name = "Nombre")
     private String nombre;
     
-    @Column(name = "contacto", nullable = false)
+    @Column(name = "Contacto")
     private String contacto;
     
-    @Column(name = "telefono", nullable = false)
+    @Column(name = "Telefono")
     private String telefono;
     
-    @Column(name = "direccion", nullable = false)
+    @Column(name = "Direccion")
     private String direccion;
     
     @OneToMany(mappedBy = "proveedor", cascade = CascadeType.ALL)
@@ -48,7 +49,7 @@ public class Proveedor {
 
     
     
-    public Proveedor(Long id, String nombre, String contacto, String telefono, String direccion) {
+    public Proveedor(Integer id, String nombre, String contacto, String telefono, String direccion) {
         this.id = id;
         this.nombre = nombre;
         this.contacto = contacto;
@@ -57,11 +58,11 @@ public class Proveedor {
     }
 
     
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

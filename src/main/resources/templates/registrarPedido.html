@@ -1,5 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registrar Pedido</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h2>Registrar Nuevo Pedido</h2>
+
+    <form th:action="@{/pedidos/usuario/{id}}" th:object="${pedido}" method="post">
+        <label>Nombre del Cliente:</label>
+        <input type="text" th:field="*{cliente.nombres}" /><br/>
+
+        <label>Apellidos del Cliente:</label>
+        <input type="text" th:field="*{cliente.apellidos}" /><br/>
+
+        <label>Producto:</label>
+        <select th:field="*{detalles[0].producto.ID_Producto}">
+            <option th:each="producto : ${productos}"
+                    th:value="${producto.ID_Producto}"
+                    th:text="${producto.nombre}">Producto</option>
+        </select><br/>
+
+        <label>Cantidad:</label>
+        <input type="number" th:field="*{detalles[0].cantidad}" /><br/>
+
+        <label>Precio Unitario:</label>
+        <input type="text" th:field="*{detalles[0].precioUnitario}" /><br/>
+
+        <input type="hidden" th:field="*{usuario.id}" />
+        <button type="submit">Registrar Pedido</button>
+    </form>
+</body>
+</html>
+
+
+<!--
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Detalle del Pedido</title>
         <meta charset="UTF-8">
@@ -36,7 +73,7 @@
 
 
 
-<!--
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>

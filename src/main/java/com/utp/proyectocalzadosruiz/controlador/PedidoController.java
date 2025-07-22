@@ -6,6 +6,7 @@ package com.utp.proyectocalzadosruiz.controlador;
 
 import com.utp.proyectocalzadosruiz.modelo.Cliente;
 import com.utp.proyectocalzadosruiz.modelo.DetallePedido;
+import com.utp.proyectocalzadosruiz.modelo.Enumeraciones;
 import com.utp.proyectocalzadosruiz.modelo.Pedido;
 import com.utp.proyectocalzadosruiz.modelo.Producto;
 import com.utp.proyectocalzadosruiz.modelo.Usuario;
@@ -55,19 +56,9 @@ public class PedidoController {
         return "exportarPedidos";
     }
 
-    /*
-    @GetMapping("/{id}")
-    public ResponseEntity<Pedido> obtenerPorId(@PathVariable Long id) {
-        Optional<Pedido> resultado = pedidoDAO.findById(id);
-        if (resultado.isPresent()) {
-            return ResponseEntity.ok(resultado.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-     */
-    @GetMapping("/{id}")
-    public String verPedidoPorId(@PathVariable Long id, Model model) {
+
+    @GetMapping("/pedidos/{id}")
+    public String verPedidoPorId(@PathVariable Integer id, Model model) {
         Optional<Pedido> resultado = pedidoDAO.findById(id);
 
         if (resultado.isEmpty()) {
@@ -79,8 +70,8 @@ public class PedidoController {
         return "exportarPedidos";
     }
 
-    @PostMapping("/usuario/{id}")
-    public String crear(@PathVariable Long id, @ModelAttribute Pedido nuevo, Model modelo) {
+    @PostMapping("/pedidos/usuario/{id}")
+    public String crear(@PathVariable Integer id, @ModelAttribute Pedido nuevo, Model modelo) {
         Optional<Usuario> usuarioExistente = this.usuarioDAO.findById(id);
 
         if (usuarioExistente.isEmpty()) {
@@ -90,14 +81,14 @@ public class PedidoController {
 
         Usuario usuario = usuarioExistente.get();
 
-        if (!"vendedor".equalsIgnoreCase(usuario.getRol())) {
+        if (usuario.getRol() != Enumeraciones.Rol.vendedor) {
             modelo.addAttribute("mensaje", "El usuario no tiene rol de vendedor");
             return "error";
         }
 
-        nuevo.setVendedor(usuario); // suponiendo que Pedido.setVendedor acepta un Usuario
+        nuevo.setUsuario(usuario); // suponiendo que Pedido.setVendedor acepta un Usuario
         nuevo.setFecha(LocalDateTime.now());
-        nuevo.setEstado("pendiente");
+        nuevo.setEstado(Enumeraciones.Estado.Pendiente);
 
         pedidoDAO.save(nuevo);
 
@@ -106,8 +97,8 @@ public class PedidoController {
         return "exito";
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> actualizar(@PathVariable Long id, @RequestBody Pedido pedidoActualizado) {
+    @PutMapping("/pedidos/{id}")
+    public ResponseEntity<String> actualizar(@PathVariable Integer id, @RequestBody Pedido pedidoActualizado) {
         Optional<Pedido> pedidoExistente = pedidoDAO.findById(id);
         if (pedidoExistente.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pedido no encontrado");
@@ -120,8 +111,8 @@ public class PedidoController {
         return ResponseEntity.ok("Pedido actualizado correctamente");
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+    @DeleteMapping("/pedidos/{id}")
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         if (!pedidoDAO.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pedido no encontrado");
         }
@@ -130,7 +121,7 @@ public class PedidoController {
         return ResponseEntity.ok("Pedido eliminado correctamente");
     }
 
-    @GetMapping("/estado/{estado}")
+    @GetMapping("/pedidos/estado/{estado}")
     public String buscarPorEstado(@RequestParam("valor") String estado, Model modelo) {
         List<Pedido> pedidos = pedidoDAO.findByEstado(estado);
 
@@ -143,9 +134,9 @@ public class PedidoController {
         }
     }
 
-    @GetMapping("/cliente/{idCliente}")
-    public ResponseEntity<List<Pedido>> buscarPorCliente(@PathVariable Long idCliente) {
-        List<Pedido> pedidos = pedidoDAO.findByClienteId(idCliente);
+    @GetMapping("/pedidos/cliente/{idCliente}")
+    public ResponseEntity<List<Pedido>> buscarPorCliente(@PathVariable Integer idCliente) {
+        List<Pedido> pedidos = pedidoDAO.findByCliente_Id(idCliente);
 
         if (pedidos.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(pedidos);
@@ -154,9 +145,9 @@ public class PedidoController {
         }
     }
 
-    @GetMapping("/vendedor/{idVendedor}")
-    public ResponseEntity<List<Pedido>> buscarPorVendedor(@PathVariable Long idVendedor) {
-        List<Pedido> pedidos = pedidoDAO.findByVendedorId(idVendedor);
+    @GetMapping("/pedidos/vendedor/{idVendedor}")
+    public ResponseEntity<List<Pedido>> buscarPorVendedor(@PathVariable Integer idVendedor) {
+        List<Pedido> pedidos = pedidoDAO.findByUsuario_Id(idVendedor);
 
         if (pedidos.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(pedidos);
@@ -165,7 +156,7 @@ public class PedidoController {
         }
     }
 
-    @GetMapping("/fecha/{fecha}")
+    @GetMapping("/pedidos/fecha/{fecha}")
     public ResponseEntity<List<Pedido>> buscarPorFecha(
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fecha) {
 
@@ -178,7 +169,7 @@ public class PedidoController {
         }
     }
 
-    @GetMapping("/rango")
+    @GetMapping("/pedidos/rango")
     public ResponseEntity<List<Pedido>> buscarPorRangoFechas(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fin) {
 
         List<Pedido> pedidos = pedidoDAO.findByFechaBetween(inicio, fin);
@@ -190,8 +181,9 @@ public class PedidoController {
         }
     }
 
-    @GetMapping("/usuario/{id}/formulario")
-    public String mostrarFormulario(@PathVariable Long id, Model model) {
+    
+    @GetMapping("/pedidos/usuario/{id}/formulario")
+    public String mostrarFormulario(@PathVariable Integer id, Model model) {
         Usuario vendedor = null;
         try {
             Optional<Usuario> vendedorExistente = usuarioDAO.findById(id);
@@ -203,7 +195,7 @@ public class PedidoController {
 
             vendedor = vendedorExistente.get();
 
-            if (!"vendedor".equalsIgnoreCase(vendedor.getRol())) {
+            if (vendedor.getRol() != Enumeraciones.Rol.vendedor) {
                 model.addAttribute("mensaje", "Rol inválido");
                 return "error";
             }
@@ -213,7 +205,7 @@ public class PedidoController {
         }
 
         Pedido pedido = new Pedido();
-        pedido.setVendedor(vendedor);
+        pedido.setUsuario(vendedor);
         pedido.setCliente(new Cliente());
 
         DetallePedido detalle = new DetallePedido();
@@ -234,8 +226,9 @@ public class PedidoController {
         model.addAttribute("vendedorId", vendedor.getId());
         return "registrarPedido";
     }
+    
 
-    @GetMapping("/pedidos")
+    @GetMapping("/pedidos/pedidos")
     public String verPedidos(Model model) {
         model.addAttribute("pedidos", pedidoDAO.findAll());
         return "exportarPedidos";

@@ -14,9 +14,9 @@ import org.springframework.stereotype.Repository;
  * @author rodri
  */
 @Repository
-public interface DetallePedidoDAO extends JpaRepository<DetallePedido, Long> {
+public interface DetallePedidoDAO extends JpaRepository<DetallePedido, Integer> {
 
-    List<DetallePedido> findByProductoId(Long idProducto);
+    List<DetallePedido> findByProducto_Id(Integer ID_Producto);
 
-    List<DetallePedido> findByPedidoId(Long idPedido);
+    List<DetallePedido> findByPedido_Id(Integer ID_Pedido);
 }

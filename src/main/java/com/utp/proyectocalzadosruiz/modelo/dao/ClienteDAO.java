@@ -15,11 +15,11 @@ import org.springframework.stereotype.Repository;
  * @author rodri
  */
 @Repository
-public interface ClienteDAO extends JpaRepository<Cliente, Long> {
+public interface ClienteDAO extends JpaRepository<Cliente, Integer> {
 
     Optional<Cliente> findByDni(String dni);
 
-    Optional<Cliente> findByCorreo(String correo);
+    Optional<Cliente> findByEmail(String correo);
 
     List<Cliente> findByNombresAndApellidos(String nombres, String apellidos);
 

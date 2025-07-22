@@ -6,6 +6,8 @@ package com.utp.proyectocalzadosruiz.modelo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,37 +22,39 @@ import java.time.LocalDateTime;
  */
 
 @Entity
-@Table(name = "movimiento_inventario")
+@Table(name = "movimientoinventario")
 public class MovimientoInventario {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "ID_Movimiento")
+    private Integer id;
     
     @ManyToOne
-    @JoinColumn(name = "id_producto", nullable = false)
+    @JoinColumn(name = "ID_Producto")
     private Producto producto;
     
     @ManyToOne
-    @JoinColumn(name = "id_usuario", nullable = false)
+    @JoinColumn(name = "ID_Usuario")
     private Usuario usuario;
     
-    @Column(name = "tipo_movimiento", nullable = false)
-    private String tipoMovimiento;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TipoMovimiento")
+    private Enumeraciones.TipoMovimiento tipoMovimiento;
     
-    @Column(name = "cantidad", nullable = false)
+    @Column(name = "Cantidad")
     private Integer cantidad;
     
-    @Column(name = "fecha", nullable = false)
+    @Column(name = "Fecha")
     private LocalDateTime fecha;
     
-    @Column(name = "observaciones", nullable = false)
+    @Column(name = "Observaciones")
     private String observaciones;
 
     public MovimientoInventario() {
     }   
     
-    public MovimientoInventario(Long id, Producto producto, Usuario usuario, String tipoMovimiento, Integer cantidad, LocalDateTime fecha, String observaciones) {
+    public MovimientoInventario(Integer id, Producto producto, Usuario usuario, Enumeraciones.TipoMovimiento tipoMovimiento, Integer cantidad, LocalDateTime fecha, String observaciones) {
         this.id = id;
         this.producto = producto;
         this.usuario = usuario;
@@ -60,21 +64,21 @@ public class MovimientoInventario {
         this.observaciones = observaciones;
     }   
     
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
    
 
-    public String getTipoMovimiento() {
+    public Enumeraciones.TipoMovimiento getTipoMovimiento() {
         return tipoMovimiento;
     }
 
-    public void setTipoMovimiento(String tipoMovimiento) {
+    public void setTipoMovimiento(Enumeraciones.TipoMovimiento tipoMovimiento) {
         this.tipoMovimiento = tipoMovimiento;
     }
 

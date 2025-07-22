@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
     @GetMapping("/")
     public String mostrarHome(Model model) {
-        model.addAttribute("vendedorId", 1L); // En tu prototipo, lo fijas aquí
+        model.addAttribute("vendedorId", 1); // En tu prototipo, lo fijas aquí
         return "home"; // Renderiza home.html
     }
 }

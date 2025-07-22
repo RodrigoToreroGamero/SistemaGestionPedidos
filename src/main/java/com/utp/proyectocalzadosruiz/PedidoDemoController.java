@@ -19,8 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
  *
  * @author rodri
  */
-@Controller
+//@Controller
 public class PedidoDemoController {
+    /*
 
     private List<Pedido> pedidosEnMemoria = new ArrayList<>();
 
@@ -30,8 +31,8 @@ public class PedidoDemoController {
         pedido.getDetalles().add(new DetallePedido()); // uno vacío para iniciar
 
         List<Producto> productos = List.of(
-            new Producto(1L, "Producto A", "Desc", "Talla", 5, 100.0, null),
-            new Producto(2L, "Producto B", "Desc", "Talla", 3, 200.0, null)
+            new Producto(1, "Producto A", "Desc", "Talla", 5, 100.0, null),
+            new Producto(2, "Producto B", "Desc", "Talla", 3, 200.0, null)
         );
 
         model.addAttribute("pedido", pedido);
@@ -51,5 +52,6 @@ public class PedidoDemoController {
         model.addAttribute("pedidos", pedidosEnMemoria);
         return "exportarPedidos";
     }
+*/
 }
 
