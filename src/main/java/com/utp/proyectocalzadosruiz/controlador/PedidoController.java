@@ -10,14 +10,20 @@ import com.utp.proyectocalzadosruiz.modelo.Enumeraciones;
 import com.utp.proyectocalzadosruiz.modelo.Pedido;
 import com.utp.proyectocalzadosruiz.modelo.Producto;
 import com.utp.proyectocalzadosruiz.modelo.Usuario;
+import com.utp.proyectocalzadosruiz.modelo.dao.ClienteDAO;
 import com.utp.proyectocalzadosruiz.modelo.dao.PedidoDAO;
 import com.utp.proyectocalzadosruiz.modelo.dao.ProductoDAO;
+import com.utp.proyectocalzadosruiz.modelo.dao.ProveedorDAO;
 import com.utp.proyectocalzadosruiz.modelo.dao.UsuarioDAO;
+import jakarta.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,14 +56,21 @@ public class PedidoController {
     @Autowired
     private ProductoDAO productoDAO;
 
+    @Autowired
+    private ProveedorDAO proveedorDAO;
+
+    @Autowired
+    private ClienteDAO clienteDAO;
+
+    static final Integer MAX_PRODUCTOS = 5;
+
     @GetMapping
     public String listarTodo(Model modelo) {
         modelo.addAttribute("pedidos", pedidoDAO.findAll());
         return "exportarPedidos";
     }
 
-
-    @GetMapping("/pedidos/{id}")
+    @GetMapping("/{id}")
     public String verPedidoPorId(@PathVariable Integer id, Model model) {
         Optional<Pedido> resultado = pedidoDAO.findById(id);
 
@@ -70,8 +83,8 @@ public class PedidoController {
         return "exportarPedidos";
     }
 
-    @PostMapping("/pedidos/usuario/{id}")
-    public String crear(@PathVariable Integer id, @ModelAttribute Pedido nuevo, Model modelo) {
+    @PostMapping("/usuario/{id}")
+    public String crear(@PathVariable Integer id, @ModelAttribute Pedido nuevo, Model modelo, HttpServletRequest request) {
         Optional<Usuario> usuarioExistente = this.usuarioDAO.findById(id);
 
         if (usuarioExistente.isEmpty()) {
@@ -86,9 +99,78 @@ public class PedidoController {
             return "error";
         }
 
+        Producto personalizado = new Producto();
+        personalizado.setNombre(request.getParameter("nombrePersonalizado"));
+        personalizado.setDescripcion(request.getParameter("descripcionPersonalizada"));
+        personalizado.setTalla(request.getParameter("tallaPersonalizada"));
+
+        try {
+            String precioParam = request.getParameter("precioPersonalizado");
+            if (precioParam != null && !precioParam.isBlank()) {
+                personalizado.setPrecio(new BigDecimal(precioParam));
+            } else {
+                modelo.addAttribute("mensaje", "El precio personalizado está vacío");
+                return "error";
+            }
+        } catch (NumberFormatException e) {
+            modelo.addAttribute("mensaje", "Formato inválido en el precio");
+            return "error";
+        }
+
+        try {
+            personalizado.setProveedor(proveedorDAO.findById(1).get());
+        } catch (NoSuchElementException e) {
+            modelo.addAttribute("mensaje", "Proveedor no encontrado");
+            return "error";
+        }
+
+        productoDAO.save(personalizado);
+
+        DetallePedido detalle = new DetallePedido();
+        detalle.setProducto(personalizado);
+        detalle.setCantidad(1);
+        detalle.setPrecioUnitario(personalizado.getPrecio());
+
+        detalle.setPedido(nuevo);
+        nuevo.getDetalles().add(detalle);
+
+        for (int i = 0; i < MAX_PRODUCTOS; i++) {
+            String productoIdStr = request.getParameter("productoId" + i);
+            // Si el vendedor no añadió este producto, lo saltamos
+            if (productoIdStr == null || productoIdStr.isBlank()) {
+                continue;
+            }
+
+            try {
+                Integer productoId = Integer.parseInt(productoIdStr);
+                Integer cantidad = Integer.parseInt(request.getParameter("cantidad" + i));
+                BigDecimal precio = new BigDecimal(request.getParameter("precio" + i));
+
+                Producto producto = productoDAO.findById(productoId).orElseThrow();
+
+                DetallePedido detalleExtra = new DetallePedido();
+                detalleExtra.setProducto(producto);
+                detalleExtra.setCantidad(cantidad);
+                detalleExtra.setPrecioUnitario(precio);
+                detalleExtra.setPedido(nuevo);
+
+                nuevo.getDetalles().add(detalleExtra);
+            } catch (Exception e) {
+                modelo.addAttribute("mensaje", "Error procesando producto adicional #" + (i + 1));
+                return "error";
+            }
+        }
+
         nuevo.setUsuario(usuario); // suponiendo que Pedido.setVendedor acepta un Usuario
         nuevo.setFecha(LocalDateTime.now());
         nuevo.setEstado(Enumeraciones.Estado.Pendiente);
+
+        try {
+            clienteDAO.save(nuevo.getCliente());
+        } catch (DataIntegrityViolationException e) {
+            modelo.addAttribute("mensaje", "Ya existe un cliente con ese DNI.");
+            return "error";
+        }
 
         pedidoDAO.save(nuevo);
 
@@ -97,7 +179,7 @@ public class PedidoController {
         return "exito";
     }
 
-    @PutMapping("/pedidos/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<String> actualizar(@PathVariable Integer id, @RequestBody Pedido pedidoActualizado) {
         Optional<Pedido> pedidoExistente = pedidoDAO.findById(id);
         if (pedidoExistente.isEmpty()) {
@@ -111,7 +193,7 @@ public class PedidoController {
         return ResponseEntity.ok("Pedido actualizado correctamente");
     }
 
-    @DeleteMapping("/pedidos/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         if (!pedidoDAO.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pedido no encontrado");
@@ -121,7 +203,7 @@ public class PedidoController {
         return ResponseEntity.ok("Pedido eliminado correctamente");
     }
 
-    @GetMapping("/pedidos/estado/{estado}")
+    @GetMapping("/estado/{estado}")
     public String buscarPorEstado(@RequestParam("valor") String estado, Model modelo) {
         List<Pedido> pedidos = pedidoDAO.findByEstado(estado);
 
@@ -134,7 +216,7 @@ public class PedidoController {
         }
     }
 
-    @GetMapping("/pedidos/cliente/{idCliente}")
+    @GetMapping("/cliente/{idCliente}")
     public ResponseEntity<List<Pedido>> buscarPorCliente(@PathVariable Integer idCliente) {
         List<Pedido> pedidos = pedidoDAO.findByCliente_Id(idCliente);
 
@@ -145,7 +227,7 @@ public class PedidoController {
         }
     }
 
-    @GetMapping("/pedidos/vendedor/{idVendedor}")
+    @GetMapping("/vendedor/{idVendedor}")
     public ResponseEntity<List<Pedido>> buscarPorVendedor(@PathVariable Integer idVendedor) {
         List<Pedido> pedidos = pedidoDAO.findByUsuario_Id(idVendedor);
 
@@ -156,7 +238,7 @@ public class PedidoController {
         }
     }
 
-    @GetMapping("/pedidos/fecha/{fecha}")
+    @GetMapping("/fecha/{fecha}")
     public ResponseEntity<List<Pedido>> buscarPorFecha(
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fecha) {
 
@@ -169,7 +251,7 @@ public class PedidoController {
         }
     }
 
-    @GetMapping("/pedidos/rango")
+    @GetMapping("/rango")
     public ResponseEntity<List<Pedido>> buscarPorRangoFechas(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fin) {
 
         List<Pedido> pedidos = pedidoDAO.findByFechaBetween(inicio, fin);
@@ -181,8 +263,7 @@ public class PedidoController {
         }
     }
 
-    
-    @GetMapping("/pedidos/usuario/{id}/formulario")
+    @GetMapping("/usuario/{id}/formulario")
     public String mostrarFormulario(@PathVariable Integer id, Model model) {
         Usuario vendedor = null;
         try {
@@ -208,9 +289,11 @@ public class PedidoController {
         pedido.setUsuario(vendedor);
         pedido.setCliente(new Cliente());
 
-        DetallePedido detalle = new DetallePedido();
-        detalle.setProducto(new Producto());
-        pedido.getDetalles().add(detalle);
+        for (int i = 0; i < MAX_PRODUCTOS; i++) {
+            DetallePedido detalle = new DetallePedido();
+            detalle.setProducto(new Producto()); // para evitar problemas con binding en Thymeleaf
+            pedido.getDetalles().add(detalle);
+        }
 
         List<Producto> productos;
 
@@ -224,14 +307,10 @@ public class PedidoController {
         model.addAttribute("pedido", pedido);
         model.addAttribute("productos", productos);
         model.addAttribute("vendedorId", vendedor.getId());
-        return "registrarPedido";
-    }
-    
+        model.addAttribute("maxIndex", MAX_PRODUCTOS - 1);
+        model.addAttribute("maxProductos", MAX_PRODUCTOS);
 
-    @GetMapping("/pedidos/pedidos")
-    public String verPedidos(Model model) {
-        model.addAttribute("pedidos", pedidoDAO.findAll());
-        return "exportarPedidos";
+        return "registrarPedido";
     }
 
 }

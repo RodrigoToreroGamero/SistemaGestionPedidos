@@ -1,36 +1,107 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Registrar Pedido</title>
-    <meta charset="UTF-8">
-</head>
-<body>
-    <h2>Registrar Nuevo Pedido</h2>
+    <head>
+        <title>Registrar Pedido</title>
+        <meta charset="UTF-8">
+        <style>
+            .bloque-producto {
+                display: none;
+            }
+        </style>
+    </head>
 
-    <form th:action="@{/pedidos/usuario/{id}}" th:object="${pedido}" method="post">
-        <label>Nombre del Cliente:</label>
-        <input type="text" th:field="*{cliente.nombres}" /><br/>
 
-        <label>Apellidos del Cliente:</label>
-        <input type="text" th:field="*{cliente.apellidos}" /><br/>
+    <script th:inline="javascript">
+        const MAX_PRODUCTOS = [[${maxProductos}]];
+        let contador = 0;
 
-        <label>Producto:</label>
-        <select th:field="*{detalles[0].producto.ID_Producto}">
-            <option th:each="producto : ${productos}"
-                    th:value="${producto.ID_Producto}"
-                    th:text="${producto.nombre}">Producto</option>
-        </select><br/>
+        function mostrarSiguienteBloque() {
+            if (contador >= MAX_PRODUCTOS) {
+                alert("Ya añadiste el máximo de productos.");
+                return;
+            }
+            const bloque = document.getElementById("producto-bloque-" + contador);
+            bloque.style.display = "block";
 
-        <label>Cantidad:</label>
-        <input type="number" th:field="*{detalles[0].cantidad}" /><br/>
+            // Activar los atributos required solo al mostrar el bloque
+            bloque.querySelectorAll("select, input").forEach(input => {
+                input.required = true;
+            });
 
-        <label>Precio Unitario:</label>
-        <input type="text" th:field="*{detalles[0].precioUnitario}" /><br/>
+            contador++;
+        }
+    </script>
 
-        <input type="hidden" th:field="*{usuario.id}" />
-        <button type="submit">Registrar Pedido</button>
-    </form>
-</body>
+    <body>
+        <h2>Registrar Nuevo Pedido</h2>
+
+        <form th:action="@{/pedidos/usuario/{id}(id=${vendedorId})}" th:object="${pedido}" method="post">
+
+            <h3>Datos del Cliente</h3>
+            <label>Nombre del Cliente:</label>
+            <input type="text" th:field="*{cliente.nombres}" required/><br/>
+
+            <label>Apellidos del Cliente:</label>
+            <input type="text" th:field="*{cliente.apellidos}" required/><br/>
+
+            <label>DNI del Cliente:</label>
+            <input type="text" th:field="*{cliente.dni}" required /><br/>
+            
+            <label>Direccion del Cliente:</label>
+            <input type="text" th:field="*{cliente.direccion}" required /><br/>
+            
+            <label>Telefono del Cliente:</label>
+            <input type="text" th:field="*{cliente.telefono}" required /><br/>
+            
+            <label>Correo del Cliente:</label>
+            <input type="email" th:field="*{cliente.email}" required /><br/>
+
+
+            <h3>Datos del Calzado Personalizado</h3>
+
+            <label>Nombre del calzado:</label>
+            <input type="text" name="nombrePersonalizado" required/><br/>
+
+            <label>Descripción del diseño del calzado:</label>
+            <textarea name="descripcionPersonalizada" rows="4" cols="50" required></textarea><br/>
+
+            <label>Talla del calzado:</label>
+            <input type="text" name="tallaPersonalizada" required/><br/>
+
+            <label>Precio del calzado:</label>
+            <input type="number" step="0.01" name="precioPersonalizado" required/><br/>
+
+
+            <h3>Añadir Productos al Pedido</h3>
+            <div th:each="i : ${#numbers.sequence(0, maxIndex)}"
+                 th:id="'producto-bloque-' + ${i}"
+                 class="bloque-producto">
+
+                <h4>Producto #[[${i + 1}]]</h4>
+
+                <label>Producto:</label>
+                <select th:field="*{detalles[__${i}__].producto.id}">
+                    <option th:each="producto : ${productos}"
+                            th:value="${producto.id}"
+                            th:text="${producto.nombre}">Producto</option>
+                </select><br/>
+
+                <label>Cantidad:</label>
+                <input type="number" th:field="*{detalles[__${i}__].cantidad}"/><br/>
+
+                <label>Precio Unitario:</label>
+                <input type="number" step="0.01" th:field="*{detalles[__${i}__].precioUnitario}"/><br/>
+
+                <hr/>
+            </div>
+
+            <button type="button" onclick="mostrarSiguienteBloque()">Añadir producto</button>
+
+
+            <input type="hidden" th:field="*{usuario.id}" />
+            <button type="submit">Registrar Pedido</button>
+        </form>
+    </body>
 </html>
 
 
